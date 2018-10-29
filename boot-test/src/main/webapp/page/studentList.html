@@ -1,0 +1,280 @@
+<html>
+
+ <head>
+	<meta charset="utf-8">
+	<title>新开普 教育</title>
+	
+	<!--<link rel="stylesheet" type="text/css" src="./test.css"></link>-->
+	<script type="text/javascript" src="/test/js/lib/jquery-3.3.1.min.js" ></script>
+	<script type="text/javascript" src="/test/js/common/utils.js" ></script>
+	
+	<style>
+		
+	</style>
+	
+	<script>
+
+	
+		$(function(){		
+			
+			findStudentList(0);
+		});	
+
+	  
+		function findStudentList(curPage_){
+			var pageSize = $("#page_size").val();
+			
+			var data = {"curPage": curPage_ ,"pageSize": pageSize};
+			
+			if(condition){
+				data = condition;
+				data["curPage"] = curPage_;
+				data["pageSize"] = pageSize;
+			}
+			
+// 			alert(JSON.stringify(data));
+			
+			$.ajax({
+				"url":"/test/stus",
+				"data":data,
+				"type":"get",
+				"contentType": "application/x-www-form-urlencoded",
+				"success":function(result){
+					
+					var page = result;
+					
+					//1.清理table
+					$("#stuTable tr:gt(0)").remove();
+					$("#chooseBtn").prop("checked",false);
+					
+					//2.更新分页信息
+					curPage = page.curPage;
+					
+					$("#cur_page").html(curPage+1);
+					$("#max_page").html(page.maxPage);
+					$("#max_element_count").html(page.maxCount);
+					$("#page_size").val(page.pageSize);
+					$("#cur_element_count").html(page.itemCountOfPage);
+					
+					if(page.isFirst == true){
+						$("#pre_page").prop("disabled",true);
+					}else{
+						$("#pre_page").prop("disabled",false);
+					}
+					
+					if(page.isLast == true){
+						$("#next_page").prop("disabled",true);
+					}else{
+						$("#next_page").prop("disabled",false);
+					}
+					
+					//3.更新table的数据
+					$(page.pageList).each(function(){
+					
+						var gender = this.gender == true ? "女":"男";
+						var myClass = this.myClass ? this.myClass.name : "--";
+						var idCardNum = this.studentIdCard? this.studentIdCard.num : "--";
+						
+						var tr = "<tr stuId='"+this.id+"'><td><input type='checkbox' stuId='"+this.id+"' /></td><td>"+this.name+"</td><td>"+this.age+"</td><td>"+gender+"</td><td>"+myClass+"</td><td>"+idCardNum+"</td>"
+						+"<td><a href='#' onclick='bindStuIdCard(\""+this.id+"\")'>绑定</a> <a href='#' onclick='unBindStuIdCard(\""+this.id+"\")'>解除绑定</a> <a href='#' onclick='forwardUpdateStudent(\""+this.id+"\")'>修改</a> <a href='#' onclick='forwardFindStudent(\""+this.id+"\")'>查看</a> <a href='#' onclick='delStudent(\""+this.id+"\")'>删除</a></td></tr>";
+						
+						
+						$("#stuTable").append(tr);
+					});
+					
+					
+				},
+				"error":function(xmlHttpRequest){
+					alert(xmlHttpRequest.responseJSON.errorMsg);
+				}
+				
+			});
+		
+		}
+		
+		function delStudent(stuId){
+		
+			$.ajax({
+				
+				"url":"/test/"+stuId+"/stu",
+				"data":{"id":stuId,"_method":"DELETE"},
+				"type":"post",
+				"contentType": "application/x-www-form-urlencoded",
+				"success":function(result){
+					alert("刪除成功");
+					
+					findStudentList(0);
+				},
+				"error":function(xmlHttpRequest){
+					alert(xmlHttpRequest.responseJSON.errorMsg);
+				}
+				
+			});
+			
+		}
+		
+		function batchDelStu(){
+			
+			var stuIds = [];
+			
+			$("#stuTable tr:gt(0) :checkbox:checked").each(function(){
+				stuIds.push($(this).attr("stuId"));
+			});
+			
+			
+			$.ajax({
+				
+				"url":"/test/stus",
+				"data":{"stuId":stuIds,"_method":"DELETE"},
+				"type":"post",
+				"contentType": "application/x-www-form-urlencoded",
+				"success":function(result){
+					alert("批量刪除成功");
+					
+					findStudentList(0);
+				},
+				"error":function(xmlHttpRequest){
+					alert(xmlHttpRequest.responseJSON.errorMsg);
+				}
+				
+			});
+		}
+		
+		function bindStuIdCard(stuId){
+			
+			$.ajax({
+				"url":"/test/stu/"+stuId+"/binding/idcard",
+				"data":{"id":stuId},
+				"type":"post",
+				"contentType": "application/x-www-form-urlencoded",
+				"success":function(result){
+					alert("绑定成功");
+					
+					findStudentList(0);
+				},
+				"error":function(xmlHttpRequest){
+					alert(xmlHttpRequest.responseJSON.errorMsg);
+				}
+				
+			});
+		}
+		
+		function unBindStuIdCard(stuId){
+			
+			$.ajax({
+				
+				"url":"/test/stu/"+stuId+"/unbinding/idcard",
+				"data":{"id":stuId},
+				"type":"post",
+				"contentType": "application/x-www-form-urlencoded",
+				"success":function(result){
+					alert("解除绑定成功");
+					
+					findStudentList(0);
+				},
+				"error":function(xmlHttpRequest){
+					alert(xmlHttpRequest.responseJSON.errorMsg);
+				}
+				
+			});
+		}
+	
+		function addStu(){
+			forwardStuAdd();
+		}
+	
+		function choose(){
+			$("#stuTable tr:gt(0) :checkbox").prop("checked",$("#chooseBtn").prop("checked"));
+		}
+		
+		function go(){
+			var num = $("#input_page").val() - 1;
+			findStudentList(num);
+		}
+	
+		function pre(){
+			findStudentList(--curPage);
+		}
+		
+		function next(){
+			findStudentList(++curPage);
+		}
+		
+		function conditionQuery(){
+			
+			condition = {};
+			
+			var name = $("#nameParam").val();
+			var age = $("#ageParam").val();
+			var gender = $("#genderParam").val();
+			
+			if(name){
+				condition["name"] = name;
+			}
+			
+			if(age){
+				condition["age"] = age;
+			}
+			
+			if(gender){
+				condition["gender"] = gender;
+			}
+			
+			findStudentList(0);
+		}
+		
+	</script>
+ </head>
+
+ <body >
+	
+	<div id="studentListDiv" style="width:99%;height:99%;background-color:#00f0ff" >
+		
+		姓名：<input id="nameParam" type="text" />
+		年龄：<input id="ageParam" type="text" />
+		性别：<select id="genderParam" type="text" >
+					<option value="">--</option>
+					<option value="false">男</option>
+					<option value="true">女</option>
+			  </select>
+		
+		<button onclick="conditionQuery()">查询</button>
+		</br></br>
+		
+		<button onclick="batchDelStu()">批量删除</button>
+		<button onclick="addStu()">添加</button>
+		<button onclick="forwardUpload()">上传</button>
+		
+		</br>
+		
+		<table id="stuTable" border="1" >
+			
+			<tr>
+				<td><input id="chooseBtn" type="checkbox" onclick="choose()" /></td><td>姓名</td><td>年龄</td><td>性别</td><td>班级</td><td>学生证号</td><td>操作</td>
+			</tr>
+		
+		</table>
+		
+		<input type="button" id="pre_page"   onclick="pre()"  value="上一页"/>
+		<input type="button" id="next_page"  onclick="next()" value="下一页"/>
+		跳转第 <input type="text" id="input_page"  value=""/>页
+		<a href="#" onclick="go()">go</a>
+		<p>当前是第<span id="cur_page">1</span>页</p>
+		<p>一共有<span id="max_page">0</span>页</p>
+		<p>一共有<span id="max_element_count">0</span>条数据</p>
+		<p>每页显示<input id="page_size" value="5"/>条数据</p>
+		<p>当前页有<span id="cur_element_count">0</span>条数据</p>
+		
+	</div>
+			
+
+	
+ </body>
+
+
+<script>
+		
+	
+</script>
+ 
+</html>

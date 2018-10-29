@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.my.dao.IUserDao">
+
+	<resultMap type="com.my.bean.User" id="userResultMap">
+		<id column="pk_id" property="id" />
+		<result column="user_name" property="username" />
+		<result column="password" property="password" />
+	</resultMap>
+
+	<select id="findUser" resultMap="userResultMap">
+		SELECT * from t_user u where u.password = #{arg1} and u.user_name = #{arg0}
+	</select>
+	
+	<select id="findUser2" resultMap="userResultMap">
+		SELECT * from t_user u where u.password = #{password} and u.user_name = #{username}
+	</select>
+	
+	<select id="findUser3" resultMap="userResultMap">
+		SELECT * from t_user u where u.password = #{arg1.password} and u.user_name = #{arg1.username}
+	</select>
+	
+<!-- 	void deleteUserById(String userId); -->
+<!--     void addUser(User user); -->
+<!--     void updateUser(User user); -->
+
+	<delete id="deleteUserById">
+		DELETE u FROM t_user u where u.pk_id = #{arg0}
+	</delete>
+	
+	<update id="updateUser">
+		UPDATE t_user u set u.user_name =  #{username} , u.password = #{password} where u.pk_id = #{id}
+	</update>
+	
+	<insert id="addUser">
+		INSERT INTO t_user (pk_id , user_name , password ) values ( #{id} , #{username} , #{password})
+	</insert>
+
+</mapper>

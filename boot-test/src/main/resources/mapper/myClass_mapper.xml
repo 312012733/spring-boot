@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.my.dao.IMyClassDao">
+
+	<resultMap type="com.my.bean.MyClass" id="myClassSimpleResultMap">
+		<id column="pk_class_id" property="id" />
+		<result column="class_name" property="name" />
+	</resultMap>
+
+	<resultMap type="com.my.bean.MyClass" id="myClassResultMap"
+		extends="myClassSimpleResultMap">
+		<collection property="students" resultMap="com.my.dao.IStudentDao.stuSimpleResultMap"></collection>
+	</resultMap>
+
+	<select id="findAllClasses" resultMap="myClassResultMap">
+		SELECT * FROM t_class c
+		LEFT JOIN t_student s on c.pk_class_id = s.fk_class_id
+		order by c.class_name
+	</select>
+	
+	<select id="findClassById" resultMap="myClassResultMap">
+		SELECT * FROM t_class c
+		LEFT JOIN t_student s on c.pk_class_id = s.fk_class_id
+		where c.pk_class_id = #{arg0}
+	</select>
+
+
+
+</mapper>

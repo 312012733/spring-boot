@@ -1,0 +1,35 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /test
+    
+spring:
+  jackson:
+    serialization:
+      indent-output: true
+  servlet:
+    multipart:
+      location: E:\upload
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        format_sql: false
+        cache.use_query_cache: true
+        cache.region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
+        net.sf.ehcache.configurationResourceName: ehcache.xml
+ 
+service:
+  database: test
+  upload-dir: E:\upload
+  c3p0:
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/${service.database}
+    driverClass: com.mysql.jdbc.Driver
+    user: root
+    password: root
+    minPoolSize: 5
+    maxPoolSize: 20

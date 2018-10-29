@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.my.dao.ITeacherDao">
+
+	<cache-ref namespace="com.my.dao.IStudentDao"/>
+
+	<resultMap type="com.my.bean.Teacher" id="teahcerSimpleResultMap">
+		<id column="pk_teacher_id" property="id" />
+		<result column="teacher_name" property="name" />
+	</resultMap>
+
+	<resultMap type="com.my.bean.Teacher" id="teahcerResultMap"
+		extends="teahcerSimpleResultMap">
+		<collection property="students"
+			resultMap="com.my.dao.IStudentDao.stuSimpleResultMap"></collection>
+	</resultMap>
+
+
+	<select id="findTeacherById" resultMap="teahcerResultMap">
+		SELECT * FROM t_teacher t
+		LEFT JOIN t_student_teacher st ON t.pk_teacher_id = st.pk_teacher_id
+		LEFT JOIN t_student s ON st.pk_student_id = s.pk_student_id
+		where t.pk_teacher_id = #{arg0}
+	</select>
+
+	<select id="findAllTeachers" resultMap="teahcerResultMap">
+		SELECT * FROM t_teacher t
+		LEFT JOIN t_student_teacher st ON t.pk_teacher_id = st.pk_teacher_id
+		LEFT JOIN t_student s ON st.pk_student_id = s.pk_student_id
+		order by t.pk_teacher_id asc
+	</select>
+
+	<select id="findExcludeTeachersByStuId" resultMap="teahcerResultMap">
+		SELECT * FROM
+		t_teacher t1 where t1.pk_teacher_id NOT IN (
+		SELECT t.pk_teacher_id FROM t_teacher t
+		LEFT JOIN t_student_teacher st ON t.pk_teacher_id = st.pk_teacher_id
+		where st.pk_student_id = #{arg0}
+		)
+		order by t1.pk_teacher_id asc
+	</select>
+
+
+
+</mapper>

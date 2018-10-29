@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-configuration PUBLIC
+         "-//Hibernate/Hibernate Configuration DTD 3.0//EN" 
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.provider_class">org.hibernate.c3p0.internal.C3P0ConnectionProvider</property>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://127.0.0.1:3306/test</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">root</property>
+		<property name="maxPoolSize">19</property>
+
+		<property name="dialect">org.hibernate.dialect.MySQL55Dialect</property>
+		<property name="hbm2ddl.auto">update</property>
+		<property name="current_session_context_class">thread</property>
+		<property name="show_sql">true</property>
+		<property name="format_sql">false</property>
+
+		<property name="cache.use_query_cache">true</property>
+		<property name="cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+		<property name="net.sf.ehcache.configurationResourceName">ehcache.xml</property>
+
+
+		<mapping class="com.my.bean2.User"/>
+		<mapping class="com.my.bean.MyClass"/>
+		<mapping class="com.my.bean.StudentIdCard"/>
+		<mapping class="com.my.bean.Teacher"/>
+		<mapping class="com.my.bean.Student"/>
+
+	</session-factory>
+
+</hibernate-configuration>

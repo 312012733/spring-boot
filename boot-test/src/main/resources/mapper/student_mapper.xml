@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.my.dao.IStudentDao">
+
+<!-- 	<cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true" /> -->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+	<resultMap type="com.my.bean.Student" id="stuSimpleResultMap">
+		<id column="pk_student_id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_modify_time" property="lastModifyTime" />
+		<result column="student_name" property="name" />
+		<result column="age" property="age" />
+		<result column="gender" property="gender" />
+	</resultMap>
+
+	<resultMap type="com.my.bean.Student" id="stuResultMap"
+		extends="stuSimpleResultMap">
+		<association property="studentIdCard"
+			resultMap="com.my.dao.IStudentIdCardDao.stuIdCardSimpleResultMap"></association>
+		<association property="myClass"
+			resultMap="com.my.dao.IMyClassDao.myClassSimpleResultMap"></association>
+		<collection property="teachers"
+			resultMap="com.my.dao.ITeacherDao.teahcerSimpleResultMap"></collection>
+	</resultMap>
+
+	<select id="findStudentByPage" resultMap="stuResultMap">
+		SELECT * FROM t_student
+		s
+		LEFT JOIN t_student_idcard i on s.fk_id_card = i.pk_student_idcard_id
+		LEFT
+		JOIN t_class c on s.fk_class_id = c.pk_class_id
+		where 1 = 1
+		
+		<if test="arg1.name!=null and arg1.name.length > 0">
+			and s.student_name like '%' #{arg1.name} '%'
+		</if>
+		
+		<if test="arg1.age!=null ">
+			and s.age = #{arg1.age}
+		</if>
+		
+		<if test="arg1.gender!=null ">
+			and s.gender = #{arg1.gender}
+		</if>
+		
+		ORDER BY
+		s.create_time DESC limit #{arg0.offset} , #{arg0.pageSize}
+	</select>
+
+	<select id="findStudentMaxCount" resultType="Long">
+		SELECT COUNT(*) FROM t_student s
+		where 1 = 1
+		
+		<if test="name!=null and name.length > 0">
+			and s.student_name like '%' #{name} '%'
+		</if>
+		
+		<if test="age!=null ">
+			and s.age = #{age}
+		</if>
+		
+		<if test="gender!=null ">
+			and s.gender = #{gender}
+		</if>
+		
+	</select>
+
+	<select id="findeStudentById" resultMap="stuResultMap" useCache="true" flushCache="false">
+		SELECT * FROM t_student s
+		LEFT JOIN t_student_idcard i on s.fk_id_card = i.pk_student_idcard_id
+		LEFT
+		JOIN t_class c on s.fk_class_id = c.pk_class_id
+		LEFT JOIN
+		t_student_teacher st on s.pk_student_id = st.pk_student_id
+		LEFT JOIN
+		t_teacher t on st.pk_teacher_id = t.pk_teacher_id
+		where s.pk_student_id
+		= #{arg0}
+	</select>
+
+
+	<delete id="deleteStudent">
+		DELETE s FROM t_student s where s.pk_student_id =
+		#{arg0}
+	</delete>
+
+	<update id="updateStudent" >
+		UPDATE t_student s set
+		s.student_name = #{name} ,
+		s.age = #{age} ,
+		s.last_modify_time = #{lastModifyTime} ,
+		s.fk_id_card =
+		#{studentIdCard.id},
+		s.fk_class_id = #{myClass.id}
+		where s.pk_student_id = #{id}
+	</update>
+
+	<insert id="addStudent">
+		INSERT INTO t_student
+		(pk_student_id , create_time ,
+		last_modify_time , student_name , age, gender ,
+		fk_class_id )
+		values
+		(#{id},#{createTime},#{lastModifyTime},#{name},#{age},#{gender},#{myClass.id})
+	</insert>
+
+</mapper>

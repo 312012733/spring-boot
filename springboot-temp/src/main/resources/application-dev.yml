@@ -1,0 +1,31 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /test
+    
+mybatis:
+  mapper-locations:
+  - classpath:mapper1/*.xml
+  - classpath:mapper2/*.xml
+  configuration:
+#    log-impl: org.apache.ibatis.logging.log4j.Log4jImpl
+    cache-enabled: true
+    
+spring:
+  jackson:
+    serialization:
+      indent-output: true
+  servlet:
+    multipart:
+      location: E:\upload
+      
+service:
+  database: test
+  upload-dir: E:\upload
+  c3p0:
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/${service.database}
+    driverClass: com.mysql.jdbc.Driver
+    user: root
+    password: root
+    minPoolSize: 20
+    maxPoolSize: 30

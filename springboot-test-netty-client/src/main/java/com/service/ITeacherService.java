@@ -1,0 +1,34 @@
+package com.service;
+
+import java.util.List;
+
+import com.bean.Teacher;
+import com.my.netty.spring.annotation.RemotApi;
+@RemotApi
+public interface ITeacherService
+{
+    
+    // Teacher findTeacherById(String id);
+    //
+    // List<Teacher> findTeachersByIds(String... ids);
+    //
+    // void save(Teacher Teacher);
+    //
+    // void update(Teacher Teacher);
+    //
+    // void delete(String id);
+    //
+    // void batDelete(String... ids);
+    //
+    // Integer findTeacherCount(Teacher condition);
+    //
+    // List<Teacher> findTeacherByPage(Page<Teacher> page, Teacher condition);
+    //
+    List<Teacher> findTeachers();
+    
+    //
+    // List<Teacher> findIncludTeachersByStuId(String studentId);
+    //
+    List<Teacher> findExcludTeachersByStuId(String stuId);
+    
+}

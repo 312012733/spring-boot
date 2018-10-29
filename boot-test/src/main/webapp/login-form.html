@@ -1,0 +1,57 @@
+<html>
+
+ <head>
+	<meta charset="utf-8">
+	<title>新开普 教育</title>
+	
+	<link rel="stylesheet" type="text/css" src="./test.css"></link>
+	<script type="text/javascript" src="/test/js/lib/jquery-3.3.1.min.js" ></script>
+	
+	<style> </style>
+	
+	<script>
+	
+		$(function(){
+		
+// 			$("#loginBtn").click(function(){
+				
+// 				var username = $("#username").val();
+// 				var password = $("#password").val();
+// 				var checkcode = $("#checkcode").val();
+				
+				//alert(username+"   "+password+"   "+checkcode);
+				
+// 			});
+			
+		});
+	
+	</script>
+	
+ </head>
+
+ <body >
+		
+				
+		<form action="/test/user_login" method="GET" enctype="application/x-www-form-urlencoded">
+		
+				用户名：<input id="username" type="text" name="username" value="admin"></input></br>
+
+				密码：<input id="password" type="password" name="password" value="1234"></input></br>
+
+				验证码：<input id="checkcode" type="text" name="checkcode" value=""></input><img  id="checkcodeImg" style="" class="img2" name="img2" width="60" height="20" src=""></img></br>
+
+				<input id="loginBtn" type="submit" value="登录" ></input>
+		
+		</form>
+			
+
+	
+ </body>
+
+
+<script>
+		
+	
+</script>
+ 
+</html>
