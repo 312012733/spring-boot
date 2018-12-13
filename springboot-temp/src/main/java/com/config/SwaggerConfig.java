@@ -29,18 +29,22 @@ public class SwaggerConfig implements WebMvcConfigurer
     {
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-        registry.addResourceHandler("/swagger/**").addResourceLocations("classpath:/static/swagger/");
+        registry.addResourceHandler("/swagger/**").addResourceLocations("classpath:/swagger/");
     }
     
     @Bean
     public Docket createRestApi()
     {
-        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
+        return new Docket(DocumentationType.SWAGGER_2).
+                apiInfo(apiInfo()).
+                select()
                 // 加了ApiOperation注解的类，才生成接口文档
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 // 包下的类，才生成接口文档
                 // .apis(RequestHandlerSelectors.basePackage("io.renren.controller"))
-                .paths(PathSelectors.any()).build().securitySchemes(security());
+                .paths(PathSelectors.any()).build()
+//                .securitySchemes(security())
+                ;
     }
     
     private ApiInfo apiInfo()

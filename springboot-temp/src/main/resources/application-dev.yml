@@ -1,4 +1,8 @@
 server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
   port: 8888
   servlet:
     context-path: /test
@@ -18,7 +22,12 @@ spring:
   servlet:
     multipart:
       location: E:\upload
-      
+  mvc:
+    throw-exception-if-no-handler-found: true
+#    static-path-pattern: /static/**
+  resources:
+    add-mappings: true
+          
 service:
   database: test
   upload-dir: E:\upload
