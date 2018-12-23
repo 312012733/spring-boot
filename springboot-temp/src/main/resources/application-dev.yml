@@ -19,9 +19,7 @@ spring:
   jackson:
     serialization:
       indent-output: true
-  servlet:
-    multipart:
-      location: E:\upload
+
   mvc:
     throw-exception-if-no-handler-found: true
 #    static-path-pattern: /static/**

@@ -15,9 +15,7 @@ spring:
   jackson:
     serialization:
       indent-output: true
-  servlet:
-    multipart:
-      location: E:\upload
+
       
 service:
   database: test

@@ -29,6 +29,12 @@ import com.utils.GeneratCheckCodeUtils.CheckCodeCallBack;
 import com.vo.ErrorHandler;
 import com.vo.UserDTO;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
+@Api("APP登录接口")
 @Controller
 @ControllerAdvice
 public class UserController
@@ -53,6 +59,13 @@ public class UserController
         return new ResponseEntity<Object>(new ErrorHandler(e.getMessage()), headers, HttpStatus.BAD_REQUEST);
     }
     
+//    @ApiOperation("登录")
+    @ApiOperation(value="用户登录", notes="用户登录接口")
+//    @ApiImplicitParams({
+//        @ApiImplicitParam(name = "username", value = "用户名", required = true ,dataType = "string"),
+//        @ApiImplicitParam(name = "password", value = "密码", required = true ,dataType = "string")
+//  })
+
     @RequestMapping(path = "/user/login", method = RequestMethod.POST, consumes = "application/json", produces = "application/json;charset=utf-8")
     @ResponseBody
     public ResponseEntity<Object> login(@RequestBody UserDTO userParam, HttpServletResponse resp,
@@ -78,7 +91,7 @@ public class UserController
             }
             
             // 验证用户信息
-            User user = userService.findUserByUsernameAndPassword(userName, password);
+            User user = userService.findByUsernameAndPassword(userName, password);
             
             if (null == user)
             {
