@@ -103,16 +103,13 @@ public class StudentServiceImpl implements IStudentService
         ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnorePaths("id", "teachers")
                 .withMatcher("name", GenericPropertyMatchers.contains())
                 .withMatcher("myClass.name", GenericPropertyMatchers.contains());
-//        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnorePaths("id", "teachers","myClass")
-//                .withMatcher("name", GenericPropertyMatchers.contains());
         
         Example<Student> stuExample = Example.of(condition, matcher);
         
         Page<Student> pageResult = stuRepository.findAll(stuExample, null, pageable);
         
-        
-//         Page<Student> pageResult = stuRepository.findAll(new
-//         StudentSpecification(condition), pageable);
+        // Page<Student> pageResult = stuRepository.findAll(new
+        // StudentSpecification(condition), pageable);
         
         return pageResult;
     }

@@ -1,11 +1,15 @@
 package com.my.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.OutputStream;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +26,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.code.kaptcha.Producer;
 import com.my.bean.User;
+import com.my.common.validator.ValidatorUtils;
+import com.my.form.UserForm;
 import com.my.service.IUserService;
-import com.my.utils.GeneratCheckCodeUtils;
-import com.my.utils.GeneratCheckCodeUtils.CheckCodeCallBack;
 import com.my.vo.ErrorHandler;
-import com.my.vo.UserDTO;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@Api(tags = "用户")
 @Controller
 @ControllerAdvice
 public class UserController
@@ -39,6 +49,9 @@ public class UserController
     
     @Autowired
     private IUserService userService;
+    
+    @Autowired
+    private Producer producer;
     
     @ExceptionHandler()
     @ResponseBody
@@ -53,19 +66,21 @@ public class UserController
         return new ResponseEntity<Object>(new ErrorHandler(e.getMessage()), headers, HttpStatus.BAD_REQUEST);
     }
     
+    @ApiOperation(value = "用户登录")
     @RequestMapping(path = "/user/login", method = RequestMethod.POST, consumes = "application/json", produces = "application/json;charset=utf-8")
+    @ApiResponses(value =
+    { @ApiResponse(code = 400, message = "失败", response = ErrorHandler.class) })
     @ResponseBody
-    public ResponseEntity<Object> login(@RequestBody UserDTO userParam, HttpServletResponse resp,
+    public ResponseEntity<Object> login(@RequestBody UserForm userForm, HttpServletResponse resp,
             HttpServletRequest req)
     {
         try
         {
-            String checkCode = userParam.getCheckCode();
-            String userName = userParam.getUsername();
-            String password = userParam.getPassword();
+            String checkCode = userForm.getCheckCode();
+            String userName = userForm.getUsername();
+            String password = userForm.getPassword();
             
-            // 验证参数
-            // TODO 空判定。。。。。
+            ValidatorUtils.validateEntity(userForm);
             
             // 验证验证码
             HttpSession session = req.getSession();
@@ -98,23 +113,22 @@ public class UserController
         }
     }
     
-    @RequestMapping(value = "/user/generatCheckCode", method = RequestMethod.GET)
-    public void generatCheckCode(HttpServletResponse resp, HttpServletRequest req) throws IOException
+    @ApiOperation(value = "获取验证码")
+    @RequestMapping(value = "/user/generatCheckCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public void captcha(HttpServletResponse resp, HttpServletRequest req) throws IOException
     {
+        resp.setHeader("Cache-Control", "no-store, no-cache");
+        resp.setContentType(MediaType.IMAGE_JPEG_VALUE);
         
-        GeneratCheckCodeUtils.generatCheckCode(resp.getOutputStream(), new CheckCodeCallBack()
-        {
-            @Override
-            public void callBack(String checkCode)
-            {
-                
-                LOG.debug("checkCode:" + checkCode);
-                
-                HttpSession session = req.getSession(true);
-                
-                session.setAttribute(CHECK_CODE, checkCode);
-            }
-        });
+        String text = producer.createText();
+        BufferedImage image = producer.createImage(text);
+        
+        req.getSession(true).setAttribute(CHECK_CODE, text);
+        LOG.debug("captcha:{}", text);
+        
+        OutputStream out = resp.getOutputStream();
+        ImageIO.write(image, "jpg", out);
+        IOUtils.closeQuietly(out);
         
     }
     
