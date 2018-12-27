@@ -21,9 +21,9 @@ service:
   database: test
   upload-dir: E:\upload
   c3p0:
-    jdbcUrl: jdbc:mysql://127.0.0.1:3306/${service.database}
+    jdbcUrl: jdbc:mysql://192.168.3.241:3306/${service.database}
     driverClass: com.mysql.jdbc.Driver
     user: root
     password: root
-    minPoolSize: 20
-    maxPoolSize: 30
+    minPoolSize: 5
+    maxPoolSize: 20
