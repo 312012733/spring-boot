@@ -2,8 +2,6 @@ package com.my.controller;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.my.bean.Student;
+import com.my.form.StudentAddOrUpdateForm;
+import com.my.form.StudentConditonForm;
 import com.my.service.IStudentService;
 import com.my.vo.ErrorHandler;
 import com.my.vo.StudentDTO;
@@ -34,15 +34,14 @@ public class StudentController
     private IStudentService stuService;
     
     @RequestMapping(value = "/student/page", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-    // @ResponseBody
-    public ResponseEntity<Object> findByPage(StudentDTO stuDTO,
+    public ResponseEntity<Object> findByPage(StudentDTO stuConditonForm,
             @PageableDefault(page = 0, size = 5, direction = Direction.DESC, sort = "createTime") Pageable pageable)
             throws IOException
     {
         
         try
         {
-            Student condition = stuDTO.buildStuCondition();
+            Student condition = stuConditonForm.buildStuCondition();
             Page<Student> pageResult = stuService.findStudentsByPage(pageable, condition);
             
             return new ResponseEntity<>(pageResult, HttpStatus.OK);
@@ -58,12 +57,12 @@ public class StudentController
     }
     
     @RequestMapping(value = "/student", method = RequestMethod.POST, consumes = "application/json", produces = "application/json;charset=utf-8")
-    public ResponseEntity<Object> add(@RequestBody StudentDTO stuDTO, HttpServletResponse response) throws IOException
+    public ResponseEntity<Object> add(@RequestBody StudentAddOrUpdateForm stuForm) throws IOException
     {
         
         try
         {
-            stuService.addStudent(stuDTO);
+            stuService.addStudent(stuForm);
             
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -77,12 +76,13 @@ public class StudentController
     }
     
     @RequestMapping(value = "/{stuId}/student", method = RequestMethod.POST, consumes = "application/json", produces = "application/json;charset=utf-8")
-    public ResponseEntity<Object> update(@PathVariable String stuId, @RequestBody StudentDTO stuDTO) throws IOException
+    public ResponseEntity<Object> update(@PathVariable String stuId, @RequestBody StudentAddOrUpdateForm stuForm)
+            throws IOException
     {
         try
         {
-            stuDTO.setId(stuId);
-            stuService.updateStudent(stuDTO);
+            stuForm.setId(stuId);
+            stuService.updateStudent(stuForm);
             
             return new ResponseEntity<>(HttpStatus.OK);
         }
