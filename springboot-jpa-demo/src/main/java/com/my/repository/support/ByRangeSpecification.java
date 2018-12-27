@@ -1,4 +1,4 @@
-package com.repository.support;
+package com.my.repository.support;
 
 import java.util.List;
 

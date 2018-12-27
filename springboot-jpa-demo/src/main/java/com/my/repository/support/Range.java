@@ -1,5 +1,5 @@
 
-package com.repository.support;
+package com.my.repository.support;
 
 import java.io.Serializable;
 

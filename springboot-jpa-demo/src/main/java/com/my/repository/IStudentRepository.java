@@ -1,7 +1,7 @@
 package com.my.repository;
 
 import com.my.bean.Student;
-import com.repository.support.ICustomRepository;
+import com.my.repository.support.ICustomRepository;
 
 //@Repository
 public interface IStudentRepository extends ICustomRepository<Student, String>

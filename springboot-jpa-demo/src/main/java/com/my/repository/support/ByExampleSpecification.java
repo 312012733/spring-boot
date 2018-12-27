@@ -1,4 +1,4 @@
-package com.repository.support;
+package com.my.repository.support;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
